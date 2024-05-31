@@ -47,7 +47,12 @@ def rotation(figure: NDArray[float], rotation_degree, if_counterclockwise) -> ND
     ])
 
     if if_counterclockwise:
-        return np.dot(figure, rotational_matrix.T)
+        resulted_matrix = []
+        for vector in figure:
+            rotated_vector = np.dot(rotational_matrix, vector)
+            resulted_matrix.append(rotated_vector)
+
+        return np.array(resulted_matrix)
     else:
         return np.dot(figure, rotational_matrix)
 
