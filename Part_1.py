@@ -66,6 +66,24 @@ def scaling(figure, scale):
     return np.dot(figure, scaling_matrix)
 
 
+def reflection(figure, axis):
+    transformation_matrix = np.array([
+        [1, 0],
+        [0, -1]
+    ])
+    if axis == "x":
+        pass
+    elif axis == "y":
+        transformation_matrix *= -1
+
+    result = []
+    for vector in figure:
+        rotated_vector = np.dot(transformation_matrix, vector)
+        result.append(rotated_vector)
+
+    return np.array(result)
+
+
 batman = np.array([[0, 0], [1, 0.2], [0.4, 1], [0.5, 0.4], [0, 0.8], [-0.5, 0.4], [-0.4, 1], [-1, 0.2], [0, 0]])
 pyramid = np.array([
     [0, 0, 0],
@@ -82,3 +100,6 @@ print_figure(rotated_figure)
 
 scaled_figure = scaling(batman, 2)
 print_figure(scaled_figure)
+
+mirrored_figure = reflection(batman, "y")
+print_figure(mirrored_figure)
