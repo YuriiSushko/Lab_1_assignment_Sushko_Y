@@ -88,19 +88,29 @@ def reflection(figure, axis):
     return np.array(result)
 
 
-def print_axis(axis, axis_name):
+def print_axis(axis, axis_name, figure: NDArray[float] = 0):
+    coordinate_system = np.array([])
     if axis.ndim == 1:
         if axis_name == "x":
             plt.plot([0, 0], [0, 1], color="blue")
+            coordinate_system = np.array([[axis[0], 0], [0, 1]])
         elif axis_name == "y":
             plt.plot([0, 1], [0, 0], color="blue")
+            coordinate_system = np.array([[1, 0], [0, axis[1]]])
 
         plt.plot([0, axis[0]], [0, axis[1]], color="red")
+
+        new_figure = np.dot(figure, coordinate_system)
+        x = new_figure[:, 0]
+        y = new_figure[:, 1]
+        plt.plot(x, y, color="black")
+
         plt.title('My 2D figure')
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.grid(True)
         plt.show()
+
     elif axis.ndim == 2:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -120,6 +130,15 @@ def print_axis(axis, axis_name):
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
         ax.grid(True)
+
+
+def to_transform(transformational_matrix, origin):
+    result = []
+    for vector in origin:
+        rotated_vector = np.dot(transformational_matrix, vector)
+        result.append(rotated_vector)
+
+    return np.array(result)
 
 
 batman = np.array([[0, 0], [1, 0.2], [0.4, 1], [0.5, 0.4], [0, 0.8], [-0.5, 0.4], [-0.4, 1], [-1, 0.2], [0, 0]])
@@ -144,4 +163,4 @@ print_figure(batman)
 
 axis_to_transform = np.array([1, 0])
 rotated_axis = rotation(axis_to_transform, 45, False)
-print_axis(rotated_axis, "x")
+print_axis(rotated_axis, "x", batman)
