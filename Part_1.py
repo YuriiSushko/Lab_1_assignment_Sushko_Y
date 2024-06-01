@@ -6,9 +6,10 @@ from numpy._typing import NDArray
 def print_figure(figure):
     x = figure[:, 0]
     y = figure[:, 1]
-
     if figure.ndim == 2:
-        plt.plot(x, y)
+        plt.plot([0, 1], [0, 0], color="blue")
+        plt.plot([0, 0], [0, 1], color="blue")
+        plt.plot(x, y, color="black")
         plt.title('My 2D figure')
         plt.xlabel('X')
         plt.ylabel('Y')
@@ -16,6 +17,9 @@ def print_figure(figure):
         plt.show()
 
     elif figure.ndim == 3:
+        plt.plot([0, 0, 1], [0, 0, 0], [0, 0, 0], color="blue")
+        plt.plot([0, 0, 0], [0, 0, 1], [0, 0, 0], color="blue")
+        plt.plot([0, 0, 0], [0, 0, 0], [0, 0, 1], color="blue")
         z = figure[:, 2]
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -29,7 +33,7 @@ def print_figure(figure):
             [0, 2, 3]
         ])
 
-        ax.plot_trisurf(x, y, z, triangles=faces, cmap='viridis', edgecolor='blue', alpha=0.8)
+        ax.plot_trisurf(x, y, z, triangles=faces, cmap='viridis', edgecolor='red', alpha=0.8)
 
         ax.set_title('My 3D figure')
 
@@ -84,6 +88,40 @@ def reflection(figure, axis):
     return np.array(result)
 
 
+def print_axis(axis, axis_name):
+    if axis.ndim == 1:
+        if axis_name == "x":
+            plt.plot([0, 0], [0, 1], color="blue")
+        elif axis_name == "y":
+            plt.plot([0, 1], [0, 0], color="blue")
+
+        plt.plot([0, axis[0]], [0, axis[1]], color="red")
+        plt.title('My 2D figure')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.grid(True)
+        plt.show()
+    elif axis.ndim == 2:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        if axis_name == "x":
+            ax.plot([0, 0], [0, 1], [0, 0], color="blue")
+            ax.plot([0, 0], [0, 0], [0, 1], color="blue")
+        elif axis_name == "y":
+            ax.plot([0, 1], [0, 0], [0, 0], color="blue")
+            ax.plot([0, 0], [0, 0], [0, 1], color="blue")
+        else:
+            ax.plot([0, 1], [0, 0], [0, 0], color="blue")
+            ax.plot([0, 0], [0, 1], [0, 0], color="blue")
+
+        ax.plot([0, axis[0]], [0, axis[1]], [0, axis[2]], color="red")
+        ax.set_title('My 3D figure')
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+        ax.grid(True)
+
+
 batman = np.array([[0, 0], [1, 0.2], [0.4, 1], [0.5, 0.4], [0, 0.8], [-0.5, 0.4], [-0.4, 1], [-1, 0.2], [0, 0]])
 pyramid = np.array([
     [0, 0, 0],
@@ -94,12 +132,16 @@ pyramid = np.array([
 ])
 
 print_figure(batman)
+#
+# rotated_figure = rotation(batman, 90, True)
+# print_figure(rotated_figure)
+#
+# scaled_figure = scaling(batman, 2)
+# print_figure(scaled_figure)
+#
+# mirrored_figure = reflection(batman, "y")
+# print_figure(mirrored_figure)
 
-rotated_figure = rotation(batman, 90, True)
-print_figure(rotated_figure)
-
-scaled_figure = scaling(batman, 2)
-print_figure(scaled_figure)
-
-mirrored_figure = reflection(batman, "y")
-print_figure(mirrored_figure)
+axis_to_transform = np.array([1, 0])
+rotated_axis = rotation(axis_to_transform, 45, False)
+print_axis(rotated_axis, "x")
