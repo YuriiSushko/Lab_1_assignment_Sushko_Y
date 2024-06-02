@@ -6,7 +6,7 @@ from numpy._typing import NDArray
 def print_figure(figure):
     x = figure[:, 0]
     y = figure[:, 1]
-    if figure.ndim == 2:
+    if figure.ndim == 2 and figure.shape[1] != 3:
         plt.plot([0, 1], [0, 0], color="blue")
         plt.plot([0, 0], [0, 1], color="blue")
         plt.plot(x, y, color="black")
@@ -16,13 +16,16 @@ def print_figure(figure):
         plt.grid(True)
         plt.show()
 
-    elif figure.ndim == 3:
-        plt.plot([0, 0, 1], [0, 0, 0], [0, 0, 0], color="blue")
-        plt.plot([0, 0, 0], [0, 0, 1], [0, 0, 0], color="blue")
-        plt.plot([0, 0, 0], [0, 0, 0], [0, 0, 1], color="blue")
-        z = figure[:, 2]
+    elif figure.ndim == 2 and figure.shape[1] == 3:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
+        x = figure[:, 0]
+        y = figure[:, 1]
+        z = figure[:, 2]
+
+        ax.plot([0, 1], [0, 0], [0, 0], color="blue")
+        ax.plot([0, 0], [0, 1], [0, 0], color="blue")
+        ax.plot([0, 0], [0, 0], [0, 1], color="blue")
 
         faces = np.array([
             [0, 1, 4],
@@ -43,12 +46,38 @@ def print_figure(figure):
         plt.show()
 
 
-def rotation(figure: NDArray[float], rotation_degree, if_counterclockwise) -> NDArray[float]:
+def rotation(figure: NDArray[float], rotation_degree, if_counterclockwise, axis_to_rotate: str = "x") -> NDArray[float]:
     rotation_radians = np.radians(rotation_degree)
     rotational_matrix = np.array([
         [np.cos(rotation_radians), -np.sin(rotation_radians)],
         [np.sin(rotation_radians), np.cos(rotation_radians)]
     ])
+
+    rotate_x = np.array([
+        [1, 0, 0],
+        [0, np.cos(rotation_radians), -np.sin(rotation_radians)],
+        [0, np.sin(rotation_radians), np.cos(rotation_radians)]
+    ])
+
+    rotate_y = np.array([
+        [np.cos(rotation_radians), 0, np.sin(rotation_radians)],
+        [0, 1, 0],
+        [-np.sin(rotation_radians), 0, np.cos(rotation_radians)]
+    ])
+
+    rotate_z = np.array([
+        [np.cos(rotation_radians), -np.sin(rotation_radians), 0],
+        [np.sin(rotation_radians), np.cos(rotation_radians), 0],
+        [0, 0, 1]
+    ])
+
+    if figure.ndim == 2 and figure.shape[1] == 3:
+        if axis_to_rotate == "x":
+            rotational_matrix = rotate_x
+        elif axis_to_rotate == "y":
+            rotational_matrix = rotate_y
+        elif axis_to_rotate == "z":
+            rotational_matrix = rotate_z
 
     if if_counterclockwise:
         resulted_matrix = []
@@ -150,7 +179,7 @@ pyramid = np.array([
     [0.5, 0.5, 1]
 ])
 
-print_figure(batman)
+# print_figure(batman)
 #
 # rotated_figure = rotation(batman, 90, True)
 # print_figure(rotated_figure)
@@ -160,7 +189,14 @@ print_figure(batman)
 #
 # mirrored_figure = reflection(batman, "y")
 # print_figure(mirrored_figure)
+#
+# axis_to_transform = np.array([1, 0])
+# rotated_axis = rotation(axis_to_transform, 45, False)
+# print_axis(rotated_axis, "x", batman)
 
-axis_to_transform = np.array([1, 0])
-rotated_axis = rotation(axis_to_transform, 45, False)
-print_axis(rotated_axis, "x", batman)
+# rotation change matrices for 3D
+print_figure(pyramid)
+
+rotated_pyramid = rotation(pyramid, 90, True, "x")
+print_figure(rotated_pyramid)
+
